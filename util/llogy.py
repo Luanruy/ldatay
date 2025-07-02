@@ -81,7 +81,7 @@ class Llogy:
         return cls._enable_leve <= LogLeve.CRITICAL
 
 
-def lprinty(text: str, *color_args):
+def lprinty(text, *color_args):
     """
     print text in color
     
@@ -89,8 +89,8 @@ def lprinty(text: str, *color_args):
     :param color_args: one or more color styles. must be Colors.BLACK .BG_BLACK...
     """
     if not Llogy.should_log():
-
         return 
+    
     if color_args == ():
         import inspect
         current_frame = inspect.currentframe()
@@ -99,7 +99,7 @@ def lprinty(text: str, *color_args):
             lineno = frame.f_lineno
             filename = frame.f_code.co_filename
         del frame
-        print(f"{Colors.BLUE}lprinty:{Colors.RESET} {Colors.GREEN} {text} {Colors.RESET} at {filename}: line {lineno}")
+        print(f"{Colors.BLUE}lprinty:{Colors.RESET} {Colors.GREEN} \n{text}\n{Colors.RESET}{Colors.BLUE}at {filename}: line {lineno}{Colors.RESET}")
         return
 
     for color in color_args:

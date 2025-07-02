@@ -8,7 +8,9 @@ sys.path.append(os.path.join(WORKDIR, 'util/'))
 
 from src.craw import Craw
 from src.staticAnalysis import PyhtonAnalysis
+from util.llogy import *
 
+# Llogy.set_leve(LogLeve.NONE)
 
 with open(os.path.join(RESULTSDIR, 'mendInfoCommit/2025_5.jsonl'), 'r') as f:
     for line in f:

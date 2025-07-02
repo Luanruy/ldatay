@@ -11,10 +11,16 @@ class DealMdic:
         data = [json.loads(_) for _ in load_lines(f'mendInfoCommit/{self.YM}.jsonl')]
         self.mdic = data[0]
 
+        self.cve_id = self.mdic['cve_id']
         self.repos_name = self._get_repos_name(self.mdic)
         self.repos_dir = os.path.join(RESULTSDIR, f'repos/{self.YM}_repos', self.mdic['cve_id'], self.repos_name)
         self.patch_files = self._get_patch_files(self.mdic)
         self.commit_id = self.mdic['commit']['commit_id']
+
+        self.result = {}
+        self.result['cve_id'] = self.cve_id
+        self.result['cve description'] = self.mdic['description']
+        self.result['commit message'] = self.mdic['commit']['message']
 
     def _get_patch_files(self, mdic):
         patch_files = []
@@ -143,7 +149,12 @@ class DealMdic:
 
         return None  
 
-        
+    def store_result(self):
+        if not os.path.exists(f'{RESULTSDIR}/results/'):
+            os.makedirs(f'{RESULTSDIR}/results/')
+
+        with open(f'{RESULTSDIR}/results/{self.cve_id}.json', 'w') as f:
+            json.dump(self.result, f, ensure_ascii=False, indent=4)   
 
 if __name__ == "__main__":
     ef = DealMdic(2025, 5)
