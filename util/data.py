@@ -16,7 +16,7 @@ def store_data_json(result_name, data):
     file_path  = os.path.join(RESULTSDIR, result_name)
     file_dir = os.path.dirname(file_path)
     if not os.path.exists(file_dir):
-        os.mkdir(file_dir)
+        os.makedirs(file_dir)
     with open(file_path, 'w') as f:
         json.dump(data, f)
     
@@ -24,7 +24,7 @@ def store_append_json(result_name, data):
     file_path  = os.path.join(RESULTSDIR, result_name)
     file_dir = os.path.dirname(file_path)
     if not os.path.exists(file_dir):
-        os.mkdir(file_dir)
+        os.makedirs(file_dir)
     with open(file_path, 'a') as f:
         jsonobj = json.dumps(data, ensure_ascii=False)
         f.write(jsonobj + '\n')
@@ -33,7 +33,7 @@ def store_json_lines(result_name, data):
     file_path = os.path.join(RESULTSDIR, result_name)
     file_dir = os.path.dirname(file_path)
     if not os.path.exists(file_dir):
-        os.mkdir(file_dir)
+        os.makedirs(file_dir)
     with open(file_path, 'w') as f:
         for d in data:
             f.write(json.dumps(d, ensure_ascii=False) + '\n')
@@ -42,7 +42,7 @@ def store_append_str(result_name, s):
     file_path  = os.path.join(RESULTSDIR, result_name)
     file_dir = os.path.dirname(file_path)
     if not os.path.exists(file_dir):
-        os.mkdir(file_dir)
+        os.makedirs(file_dir)
     with open(file_path, 'a') as f:
         f.write(s + '\n')
         

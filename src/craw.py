@@ -257,6 +257,6 @@ if __name__ == '__main__':
     months = ['5']
     for y in years:
         for m in months:
-            Craw.collect_cves(y, m)
+            # Craw.collect_cves(y, m)
             # Craw.collect_commits(y, m)
-            # Craw.collect_raw_code_files(y, m)
+            Craw.collect_repos(y, m)
