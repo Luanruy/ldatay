@@ -208,13 +208,6 @@ class Craw:
                         else:
                             mdic['commit'] = 'NONE'
 
-                if mdic['commit'] != 'NONE':
-                    file_language = set()
-                    for file in mdic['commit']['files']:
-                        file_language.add(file['filename'].split('.')[-1])
-                    if len(file_language) == 1:
-                        mdic['language'] = file_language.pop() 
-
                 store_append_json(res_path, mdic)
                 time.sleep(0.1)
         
@@ -246,6 +239,25 @@ class Craw:
                 import git
                 git.Repo.clone_from(download_url, repos_path)
                 time.sleep(0.3)  
+        
+    @staticmethod
+    def get_repos_via_mdic(Year, Month, mdic):
+        url = mdic['commit']['url']
+        local_repos_path = os.path.join(RESULTSDIR, f'repos/{Year}_{Month}_repos')
+        if not os.path.exists(local_repos_path):
+            os.makedirs(local_repos_path)
+        repos_path = os.path.join(local_repos_path, f"{mdic['cve_id']}")
+        if not os.path.exists(repos_path):
+            os.makedirs(repos_path)
+
+        download_url = 'https://github.com/' + url.partition('/repos/')[2].partition('/commits/')[0] + '.git'
+        repos_path = os.path.join(repos_path, url.partition('/repos/')[2].partition('/commits/')[0].replace('/','_'))
+
+        lprinty(download_url + '\n' + repos_path, Colors.YELLOW)
+        import git
+        git.Repo.clone_from(download_url, repos_path)
+
+
 
 if __name__ == '__main__':
     Llogy.set_leve(LogLeve.CRITICAL)

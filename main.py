@@ -10,13 +10,34 @@ from src.craw import Craw
 from src.staticAnalysis import PyhtonAnalysis
 from util.llogy import *
 
-# Llogy.set_leve(LogLeve.NONE)
+from src.staticAnalysis import *
 
-with open(os.path.join(RESULTSDIR, 'mendInfoCommit/2025_5.jsonl'), 'r') as f:
-    for line in f:
-        mdic = json.loads(line)
-        break
+YEARS = ['2024', '2025']
+MONTH = [f'{i+1}' for i in range(12)]
 
-pa = PyhtonAnalysis(2025, 5, mdic)
+for y in YEARS:
+    for m in MONTH:
+        Craw.collect_cves(y, m)
+        Craw.collect_commits(y, m)
+        Craw.collect_repos(y, m)
 
+        with open(os.path.join(RESULTSDIR, f'mendInfoCommit/{y}_{m}.jsonl'), 'r') as f:
+            for line in f:
+                mdic = json.loads(line)
 
+                lprinty(mdic['cve_id'])
+
+                # 判断项目使用的语言，可能不准确  后续更改  TODO
+                file_language = set()
+                if mdic['commit'] != 'NONE':
+                    for file in mdic['commit']['files']:
+                        file_language.add(file['filename'].split('.')[-1])
+                
+                if 'cpp' in file_language:
+                    CppAnalysis(y, m, mdic)
+                if 'go' in file_language:
+                    GoAnalysis(y, m, mdic)
+                if 'py' in file_language:
+                    PyhtonAnalysis(y, m, mdic)
+                
+            

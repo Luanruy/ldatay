@@ -1,6 +1,5 @@
 config.json
 outputs/
 src/__pycache__/
-test.py 
 test2.py
 util/__pycache__/

@@ -8,8 +8,7 @@ class DealMdic:
 
     def __init__(self, y, m, mdic):
         self.YM = str(y) + '_' + str(m)
-        data = [json.loads(_) for _ in load_lines(f'mendInfoCommit/{self.YM}.jsonl')]
-        self.mdic = data[0]
+        self.mdic = mdic
 
         self.cve_id = self.mdic['cve_id']
         self.repos_name = self._get_repos_name(self.mdic)

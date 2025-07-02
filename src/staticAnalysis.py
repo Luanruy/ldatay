@@ -20,7 +20,6 @@ class PyhtonAnalysis(DealMdic):
             for cg in changes:
 
                 if cg['type'] == 'removed':
-                    lprinty(cg)
                     fun_name, func = self.get_function_at_line_ast_python(source_bef, cg['line_number'])
                     if fun_name != None:
                         if fun_name not in f_bef:
@@ -29,10 +28,9 @@ class PyhtonAnalysis(DealMdic):
                             f_bef[fun_name]['removed'] = list()
                         f_bef[fun_name]['removed'].append(f"-    {cg['line_number']}:{cg['content']}")
                     else:
-                        pass   #TODO 同一个文件内可能有不在函数内的删减，这种情况应该定位某些行数保留下来
+                        pass   #TODO  同一个文件内可能有不在函数内的删减，这种情况应该定位某些行数保留下来
 
                 if cg['type'] == 'added':
-                    lprinty(cg)
                     fun_name, func = self.get_function_at_line_ast_python(source_now, cg['line_number'])
                     if fun_name != None:
                         if fun_name not in f_now:
