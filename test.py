@@ -7,7 +7,6 @@ sys.path.append(os.path.join(WORKDIR, 'src/'))
 sys.path.append(os.path.join(WORKDIR, 'util/'))
 
 from src.craw import Craw
-from src.staticAnalysis import PyhtonAnalysis
 from util.llogy import *
 
 from src.staticAnalysis import *
@@ -15,7 +14,7 @@ from src.staticAnalysis import *
 y = '2025'
 m = '5'
 
-cve_id = 'CVE-2025-48948' # go 
+# cve_id = 'CVE-2025-48948' # go 
 cve_id = 'CVE-2018-25111' # py
 
 
@@ -35,6 +34,8 @@ if mdic['commit'] != 'NONE':
 if 'cpp' in file_language:
     CppAnalysis(y, m, mdic)
 if 'go' in file_language:
+    lprinty('gogogogogogogo')
+    exit(0)
     GoAnalysis(y, m, mdic)
 if 'py' in file_language:
     PyhtonAnalysis(y, m, mdic)

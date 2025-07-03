@@ -11,6 +11,7 @@ class PyhtonAnalysis(DealMdic):
         self.store_result()
 
     def analyz(self):
+        self.result['language'] = 'python'
         for pf in self.patch_files:
             changes = self.get_changed_statements(pf[0])
             source_bef = self.get_code_at_commit(self.repos_dir, self.get_previous_commit(pf[1]), pf[1])
@@ -48,23 +49,23 @@ class PyhtonAnalysis(DealMdic):
                 names.add(_)
 
             for name in names:
-                if pf[1] not in self.result:
-                    self.result[pf[1]] = {}
+                if pf[1] not in self.result['analysis']:
+                    self.result['analysis'][pf[1]] = {}
                     
-                if name not in self.result[pf[1]]:
-                    self.result[pf[1]][name] = {}
+                if name not in self.result['analysis'][pf[1]]:
+                    self.result['analysis'][pf[1]][name] = {}
 
-                self.result[pf[1]][name]['before'] = f_bef[name] if name in f_bef else None
-                self.result[pf[1]][name]['now'] = f_now[name] if name in f_now else None
-                self.result[pf[1]][name]['callers'] = None   #TODO  获取某个项目某个文件中某个函数的所有caller
-                self.result[pf[1]][name]['callees'] = None   #TODO  获取某个项目某个文件中某个函数的所有callee
+                self.result['analysis'][pf[1]][name]['before'] = f_bef[name] if name in f_bef else None
+                self.result['analysis'][pf[1]][name]['now'] = f_now[name] if name in f_now else None
+                self.result['analysis'][pf[1]][name]['callers'] = None   #TODO  获取某个项目某个文件中某个函数的所有caller
+                self.result['analysis'][pf[1]][name]['callees'] = None   #TODO  获取某个项目某个文件中某个函数的所有callee
 
             if len(names) == 0:
                 # TODO patch修改的内容完全不涉及函数，直接将patch保留，后续可以扩充为保留某一行的前后多少行  
                 lprinty(pf[0])
-                if pf[1] not in self.result:
-                    self.result[pf[1]] = {}
-                self.result[pf[1]]['patch'] = pf[0]
+                if pf[1] not in self.result['analysis']:
+                    self.result['analysis'][pf[1]] = {}
+                self.result['analysis'][pf[1]]['patch'] = pf[0]
 
     def get_function_at_line_ast_python(self, source, target_line):
         """

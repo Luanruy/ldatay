@@ -9,6 +9,17 @@ RESULTSDIR = os.path.join(WORKDIR, 'outputs')
 with open(os.path.join(WORKDIR, 'config.json'), 'r') as f:
     GITHUBAPI = json.load(f)['git_api'] 
 
+def get_mdic(y, m, cve_id):
+    mdic_path = os.path.join(RESULTSDIR, f'mendInfoCommit/{y}_{m}.jsonl')
+    if not os.path.exists(mdic_path):
+        critical(f'do not find {mdic_path}')
+    with open(mdic_path, 'r') as f:
+        for line in f:
+            mdic = json.loads(line)
+            if mdic['cve_id'] == cve_id:
+                return mdic
+    return None
+
 def exists_in_results(result_name):
     return os.path.exists(os.path.join(RESULTSDIR, result_name))
 

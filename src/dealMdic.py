@@ -16,10 +16,9 @@ class DealMdic:
         self.patch_files = self._get_patch_files(self.mdic)
         self.commit_id = self.mdic['commit']['commit_id']
 
-        self.result = {}
-        self.result['cve_id'] = self.cve_id
-        self.result['cve description'] = self.mdic['description']
-        self.result['commit message'] = self.mdic['commit']['message']
+        self.result = mdic
+        self.result['analysis'] = {}
+        self.result.pop('q_id')
 
     def _get_patch_files(self, mdic):
         patch_files = []

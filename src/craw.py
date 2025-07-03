@@ -19,7 +19,7 @@ class Craw:
 
     @staticmethod
     def collect_cves(Year, Month):
-        YM = Year + '_' + Month
+        YM = str(Year) + '_' + str(Month)
         cves_visited = 'cves/' + YM + '.log'
 
         headers = {
@@ -173,7 +173,7 @@ class Craw:
 
     @staticmethod
     def collect_commits(Year, Month):
-        YM = Year+'_'+Month
+        YM = str(Year) + '_' + str(Month)
         mendio_info_path = 'mendInfo/' + YM + '.jsonl'
         res_path = 'mendInfoCommit/' + YM + '.jsonl'
 
@@ -205,9 +205,9 @@ class Craw:
                                 'commit_id': data['sha'],
                                 'commit_date': data['commit']['committer']['date']
                             }
-                        else:
-                            mdic['commit'] = 'NONE'
 
+                if 'commit' not in mdic:
+                    continue
                 store_append_json(res_path, mdic)
                 time.sleep(0.1)
         
