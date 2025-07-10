@@ -187,35 +187,6 @@ class DealMdic:
             print(f"Warning: Could not get previous commit for {filename}: {e}")
             return None  
         
-        try:
-            # 使用git log --follow来追踪文件历史，包括重命名
-            # -n 2 获取最近的2个commit（第一个是当前commit，第二个是我们要的前一个）
-            # --pretty=format:%H 只输出commit哈希值
-            log_output = repo.git.log(
-                '--follow', 
-                '--pretty=format:%H', 
-                '-n', '2',
-                self.commit_id,
-                '--',
-                filename
-            )
-            
-            commits = log_output.strip().split('\n')
-            
-            # 如果只有一个commit，说明这是第一次引入该文件
-            if len(commits) <= 1:
-                return None
-                
-            # 第一个是当前commit，第二个是前一个修改该文件的commit
-            if len(commits) >= 2 and commits[1].strip():
-                return commits[1].strip()
-                
-            return None
-            
-        except GitCommandError as e:
-            # 如果文件不存在或其他git错误
-            print(f"Warning: Could not get previous commit for {filename}: {e}")
-            return None  
 
     def analyz(self, get_function_at_line):
         self.result['language'] = 'python'
