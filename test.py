@@ -17,6 +17,7 @@ m = '5'
 # cve_id = 'CVE-2025-48948' # go 
 # cve_id = 'CVE-2018-25111' # py
 cve_id = 'CVE-2025-48883' # php
+cve_id = 'CVE-2024-23337' #cpp
 
 
 mdic = None
@@ -43,12 +44,11 @@ if mdic['commit'] != 'NONE':
 
 if 'cpp' in file_language or 'c' in file_language:
     CppAnalysis(y, m, mdic)
-if 'go' in file_language:
-    lprinty('gogogogogogogo')
-    # exit(0)
+elif 'go' in file_language:
     GoAnalysis(y, m, mdic)
-if 'py' in file_language:
-    PyhtonAnalysis(y, m, mdic)
-if 'php' in file_language:
+elif 'php' in file_language:
+    print(mdic['language'])
     PhpAnalysis(y, m, mdic)
+elif 'py' in file_language:
+    PyhtonAnalysis(y, m, mdic)
     

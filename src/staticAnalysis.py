@@ -7,6 +7,7 @@ import os
 class PyhtonAnalysis(DealMdic):
     def __init__(self, y, m, mdic):
         super().__init__(y, m, mdic)
+        self.result['language'] = 'python'
         self.analyz(self.get_function_at_line_ast_python)
         self.store_result()
 
@@ -97,6 +98,7 @@ class PyhtonAnalysis(DealMdic):
 class GoAnalysis(DealMdic):
     def __init__(self, y, m, mdic):
         super().__init__(y, m, mdic)
+        self.result['language'] = 'go'
         self.analyz(self.get_function_at_line_go)
         self.store_result()
 
@@ -185,6 +187,7 @@ class GoAnalysis(DealMdic):
 class CppAnalysis(DealMdic):
     def __init__(self, y, m, mdic):
         super().__init__(y, m, mdic)
+        self.result['language'] = 'cpp'
         self.analyz(self.get_function_at_line_cpp)
         self.store_result()
 
@@ -273,6 +276,7 @@ class CppAnalysis(DealMdic):
 class PhpAnalysis(DealMdic):
     def __init__(self, y, m, mdic):
         super().__init__(y, m, mdic)
+        self.result['language'] = 'php'
         self.analyz(self.get_function_at_line_php)
         self.store_result()
 

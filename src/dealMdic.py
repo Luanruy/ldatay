@@ -189,7 +189,6 @@ class DealMdic:
         
 
     def analyz(self, get_function_at_line):
-        self.result['language'] = 'python'
         for pf in self.patch_files:
             changes = self.get_changed_statements(pf[0])
             precommit = self.get_previous_commit(pf[1])
