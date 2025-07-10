@@ -35,6 +35,10 @@ class DealMdic:
     
     @staticmethod
     def get_code_at_commit(repos_dir, commit, filename):
+        if commit == None:
+            return None
+        if filename == None:
+            return None
         repo = Repo(repos_dir)
         try:
             return repo.git.show(f"{commit}:{filename}")
@@ -127,27 +131,109 @@ class DealMdic:
 
     def get_previous_commit(self, filename):
         """
-        返回某个 commit 修改 filename 之前的 commit（即 filename 的上一个版本所在的 commit）。
+        返回修改filename文件的前一个commit哈希值
+        
+        使用git log来找到在当前commit之前最近一次修改该文件的commit
+        
+        Args:
+            filename (str): 文件名
+            
+        Returns:
+            str or None: 前一个修改该文件的commit哈希值，如果不存在则返回None
         """
         repo = Repo(self.repos_dir)
-        commit = repo.commit(self.commit_id)
-
-        if len(commit.parents) > 1:
-            for parent in commit.parents:
-                try:
-                    diff = commit.diff(parent, paths=filename)
-                    if diff: 
-                        return parent.hexsha
-                except GitCommandError:
-                    continue
+        
+        try:
+            # 使用git log --follow来追踪文件历史，包括重命名
+            # -n 2 获取最近的2个commit（第一个是当前commit，第二个是我们要的前一个）
+            # --pretty=format:%H 只输出commit哈希值
+            log_output = repo.git.log(
+                '--follow', 
+                '--pretty=format:%H', 
+                '-n', '2',
+                self.commit_id,
+                '--',
+                filename
+            )
+            
+            commits = log_output.strip().split('\n')
+            
+            # 如果只有一个commit，说明这是第一次引入该文件
+            if len(commits) <= 1:
+                return None
+                
+            # 第一个是当前commit，第二个是前一个修改该文件的commit
+            if len(commits) >= 2 and commits[1].strip():
+                return commits[1].strip()
+                
+            return None
+            
+        except GitCommandError as e:
+            # 如果文件不存在或其他git错误
+            print(f"Warning: Could not get previous commit for {filename}: {e}")
             return None  
 
-        if commit.parents:
-            return commit.parents[0].hexsha
+    def analyz(self, get_function_at_line):
+        self.result['language'] = 'python'
+        for pf in self.patch_files:
+            changes = self.get_changed_statements(pf[0])
+            precommit = self.get_previous_commit(pf[1])
+            source_bef = self.get_code_at_commit(self.repos_dir, self.get_previous_commit(pf[1]), pf[1]) if precommit else None
+            source_now = self.get_code_at_commit(self.repos_dir, self.commit_id, pf[1])
+            f_bef = dict()
+            f_now = dict()
+            for cg in changes:
 
-        return None  
+                if cg['type'] == 'removed':
+                    fun_name, func = get_function_at_line(source_bef, cg['line_number'])
+                    if fun_name != None:
+                        if fun_name not in f_bef:
+                            f_bef[fun_name] = {}
+                            f_bef[fun_name]['code'] = func
+                            f_bef[fun_name]['removed'] = list()
+                        f_bef[fun_name]['removed'].append(f"-    {cg['line_number']}:{cg['content']}")
+                    else:
+                        pass   #TODO  同一个文件内可能有不在函数内的删减，这种情况应该定位某些行数保留下来
+
+                if cg['type'] == 'added':
+                    fun_name, func = get_function_at_line(source_now, cg['line_number'])
+                    if fun_name != None:
+                        if fun_name not in f_now:
+                            f_now[fun_name] = {}
+                            f_now[fun_name]['code'] = func
+                            f_now[fun_name]['added'] = list()
+                        f_now[fun_name]['added'].append(f"+    {cg['line_number']}:{cg['content']}")
+                    else:
+                        pass    #TODO  同一个文件内可能有不在函数内的删减，这种情况应该定位某些行数保留下来
+           
+            names = set()
+            for _ in f_bef:
+                names.add(_)
+            for _ in f_now:
+                names.add(_)
+
+            for name in names:
+                if pf[1] not in self.result['analysis']:
+                    self.result['analysis'][pf[1]] = {}
+                    
+                if name not in self.result['analysis'][pf[1]]:
+                    self.result['analysis'][pf[1]][name] = {}
+
+                self.result['analysis'][pf[1]][name]['before'] = f_bef[name] if name in f_bef else None
+                self.result['analysis'][pf[1]][name]['now'] = f_now[name] if name in f_now else None
+                self.result['analysis'][pf[1]][name]['callers'] = None   #TODO  获取某个项目某个文件中某个函数的所有caller
+                self.result['analysis'][pf[1]][name]['callees'] = None   #TODO  获取某个项目某个文件中某个函数的所有callee
+
+            if len(names) == 0:
+                # TODO patch修改的内容完全不涉及函数，直接将patch保留，后续可以扩充为保留某一行的前后多少行  
+                # lprinty(pf[0])
+                if pf[1] not in self.result['analysis']:
+                    self.result['analysis'][pf[1]] = {}
+                self.result['analysis'][pf[1]]['patch'] = pf[0]
+
 
     def store_result(self):
+        lprinty(f'{self.cve_id} analysis compelete, storing.....')
         if not os.path.exists(f'{RESULTSDIR}/results/'):
             os.makedirs(f'{RESULTSDIR}/results/')
 

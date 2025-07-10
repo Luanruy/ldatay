@@ -47,5 +47,6 @@ c:  156    CVE-2024-23337
 """
 mdic = get_mdic(2025, 5, 'CVE-2024-23337')
 Craw.get_repos_via_mdic(2025, 5, mdic)
+
 for file in mdic['commit']['files']:
     lprinty(file['filename'])
