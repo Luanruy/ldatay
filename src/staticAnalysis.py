@@ -176,29 +176,8 @@ class GoAnalysis(DealMdic):
 class CppAnalysis(DealMdic):
     def __init__(self, y, m, mdic):
         super().__init__(y, m, mdic)
-        self.analyz()
-
-    def analyz(self):
-        for pf in self.patch_files:
-            changes = self.get_changed_statements(pf[0])
-            source_bef = self.get_code_at_commit(self.repos_dir, self.get_previous_commit(pf[1]), pf[1])
-            source_now = self.get_code_at_commit(self.repos_dir, self.commit_id, pf[1])
-            f_bef = dict()
-            f_now = dict()
-            for cg in changes:
-
-                if cg['type'] == 'removed':
-                    fun_name, func = self.get_function_at_line_cpp(source_bef, cg['line_number'])
-                    if fun_name != None:
-                        f_bef[fun_name] = func
-                if cg['type'] == 'added':
-                    lprinty(cg['line_number'])
-                    fun_name, func = self.get_function_at_line_cpp(source_now, cg['line_number'])
-                    if fun_name != None:
-                        f_now[fun_name] = func
-            
-            print(f_bef)
-            print(f_now)
+        self.analyz(self.get_function_at_line_cpp)
+        self.store_result()
 
     def get_function_at_line_cpp(self, source, target_line):
         """
