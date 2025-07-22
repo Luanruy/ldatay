@@ -7,7 +7,7 @@ import os
 class PyhtonAnalysis(DealMdic):
     def __init__(self, y, m, mdic):
         super().__init__(y, m, mdic)
-        self.result['language'] = 'python'
+        self.result['language'] = 'py'
         self.analyz(self.get_function_at_line_ast_python)
         self.store_result()
 

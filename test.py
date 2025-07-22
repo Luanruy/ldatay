@@ -14,10 +14,10 @@ from src.staticAnalysis import *
 y = '2025'
 m = '5'
 
-# cve_id = 'CVE-2025-48948' # go 
-# cve_id = 'CVE-2018-25111' # py
-cve_id = 'CVE-2025-48883' # php
-cve_id = 'CVE-2024-23337' #cpp
+cve_id = 'CVE-2025-48948' # go 
+cve_id = 'CVE-2018-25111' # py
+# cve_id = 'CVE-2025-48883' # php
+# cve_id = 'CVE-2024-23337' #cpp
 
 
 mdic = None
